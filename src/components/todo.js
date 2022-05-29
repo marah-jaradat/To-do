@@ -59,6 +59,7 @@ const ToDo = () => {
   };
 
   useEffect(() => {
+
     const endOffset = itemOffset + settings.numberItems;
     console.log(`Loading items from ${itemOffset} to ${endOffset}`);
     setCurrentItems(list.slice(itemOffset, endOffset));
