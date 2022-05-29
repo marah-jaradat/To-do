@@ -11,6 +11,7 @@ export default function Form(props) {
     setting.setDisplaySettings(!setting.displaySettings);
     console.log(setting.displaySettings);
   };
+
   return (
     <div>
       <form id="for" onSubmit={handleSubmit}>
@@ -52,12 +53,14 @@ export default function Form(props) {
           <button type="submit">Add Item</button>
         </label>
       </form>
+
       <Switch checked={setting.displaySettings} onClick={handleClick}>
         Display completed Items
       </Switch>
       <button onClick={props.handleSort} className="sortB">
         Sort by Difficulty
       </button>
+
     </div>
   );
 }

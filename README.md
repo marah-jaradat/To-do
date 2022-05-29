@@ -22,7 +22,9 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 
 ### UML diagram
 
-![uml](./src/lab31.png)
+
+![uml](./src/assets/lab31.png)
+
 
 ### Links:
 
@@ -30,4 +32,6 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 
 [netlify](https://playful-pony-bc1f07.netlify.app/)
 
-![netlify](./src/netlify.png)
+
+![netlify](./src/assets/netlify.png)
+
