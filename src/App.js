@@ -1,15 +1,52 @@
 import React from "react";
-import "./App.css";
-import ToDo from "./components/todo";
-import Settings from "./context/settings";
-import "./components/form.css";
-function App() {
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { useState } from "react";
+
+import Auth from "./components/auth";
+import Header from "./components/header";
+import Home from "./components/home";
+import LoginAndRegister from "./components/login&Regster";
+import SettingsForm from "./components/settingsForm";
+
+import "./app.scss";
+
+const App = () => {
+  const [incomplete, setIncomplete] = useState([]);
+  const [list, setList] = useState([]);
+
   return (
-    <div className="App">
-      <Settings>
-        <ToDo />
-      </Settings>
-    </div>
+    <Router>
+      <Header incomplete={incomplete} />
+      <LoginAndRegister data-testid="login-and-register" />
+      <Switch>
+        <Route exact path="/">
+          <Auth>
+            <Home
+              setIncomplete={setIncomplete}
+              incomplete={incomplete}
+              setList={setList}
+              list={list}
+            />
+          </Auth>
+        </Route>
+        <Route path="/settings">
+          <Auth>
+            <SettingsForm />
+          </Auth>
+        </Route>
+        <Route path="*">
+          <Auth>
+            <Home
+              setIncomplete={setIncomplete}
+              incomplete={incomplete}
+              setList={setList}
+              list={list}
+            />
+          </Auth>
+        </Route>
+      </Switch>
+    </Router>
   );
-}
+};
+
 export default App;
