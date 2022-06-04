@@ -8,8 +8,10 @@ import { v4 as uuid } from "uuid";
 import { SettingsContext } from "../context/settings.js";
 import ReactPaginate from "react-paginate";
 import { Card, Elevation } from "@blueprintjs/core";
+import { AuthContext } from "../context/Auth";
+import { When } from "react-if";
 
-const ToDo = () => {
+const ToDo = (props) => {
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
@@ -18,6 +20,7 @@ const ToDo = () => {
   const [incomplete, setIncomplete] = useState([]);
   const [sort, setSort] = useState(false);
   const settings = useContext(SettingsContext);
+  const auth = useContext(AuthContext);
 
   function addItem(item) {
     console.log(item);
@@ -38,25 +41,46 @@ const ToDo = () => {
       }
       return item;
     });
+
     setList(items);
   }
-  const handleSort = () => {
-    let items;
-    if (settings.sortBy === "difficulty") {
-      items = currentItems.sort((a, b) => {
-        if (a.difficulty > b.difficulty) {
-          return 1;
-        } else if (a.difficulty < b.difficulty) {
-          return -1;
-        }
-        return 0;
-      });
+
+  const handleSort = (e) => {
+    let items = [];
+    console.log(e);
+
+    switch (e.target.innerText) {
+      case "Sort by Difficulty":
+        items = currentItems.sort((a, b) => {
+          if (a.difficulty > b.difficulty) {
+            return 1;
+          } else if (a.difficulty < b.difficulty) {
+            return -1;
+          }
+          return 0;
+        });
+        settings.setSortBy("difficulty");
+        break;
+      case "Sort by Assignee":
+        items = currentItems.sort((a, b) => {
+          return a.assignee.localeCompare(b.assignee);
+        });
+        settings.setSortBy("assignee");
+        break;
+      default:
+        break;
     }
 
     console.log(items);
     setSort(!sort);
     setList(items);
   };
+
+  useEffect(() => {
+    if (list) {
+      localStorage.setItem("list", JSON.stringify(list));
+    }
+  }, [list]);
 
   useEffect(() => {
     const endOffset = itemOffset + settings.numberItems;
@@ -83,35 +107,48 @@ const ToDo = () => {
   return (
     <>
       <Header></Header>
-      <header>
-        <h3 id="h3"> no. of bending items: {incomplete} items </h3>
+      <header className="headerclass">
+        <h1>To Do List: {incomplete} items pending</h1>
+        <When condition={auth.isLoggedIn}>
+          <button
+            onClick={(e) => {
+              auth.signOut();
+            }}
+            className="signOut"
+          >
+            sign Out
+          </button>
+        </When>
       </header>
       <div className="container">
         <Card elevation={Elevation.TWO} className="card-form">
           <Form addItem={addItem} handleSort={handleSort} />
         </Card>
-
-        <div className="list-container">
-          {currentItems.map((item) => (
-            <List
-              item={item}
-              deleteItem={deleteItem}
-              toggleComplete={toggleComplete}
-            />
-          ))}
+        <When condition={auth.isLoggedIn}>
+          <div className="list-container">
+            {currentItems.map((item) => (
+              <List
+                item={item}
+                deleteItem={deleteItem}
+                toggleComplete={toggleComplete}
+              />
+            ))}
+          </div>
+        </When>
+      </div>
+      <When condition={auth.isLoggedIn}>
+        <div className="pag">
+          <ReactPaginate
+            breakLabel="..."
+            nextLabel="next >"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={5}
+            pageCount={pageCount}
+            previousLabel="< previous"
+            renderOnZeroPageCount={null}
+          />
         </div>
-      </div>
-      <div className="pag">
-        <ReactPaginate
-          breakLabel="..."
-          nextLabel="next >"
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={5}
-          pageCount={pageCount}
-          previousLabel="< previous"
-          renderOnZeroPageCount={null}
-        />
-      </div>
+      </When>
     </>
   );
 };

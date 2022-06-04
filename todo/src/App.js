@@ -2,13 +2,17 @@ import React from "react";
 import "./App.css";
 import ToDo from "./components/todo";
 import Settings from "./context/settings";
+
 import "./components/form.css";
+import Auth from "./context/Auth";
 function App() {
   return (
     <div className="App">
-      <Settings>
-        <ToDo />
-      </Settings>
+      <Auth>
+        <Settings>
+          <ToDo />
+        </Settings>
+      </Auth>
     </div>
   );
 }
